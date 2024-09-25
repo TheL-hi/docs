@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Tiardey Gaming Keyboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .input-container {
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .knob-input {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Customize Your Tiardey Gaming Keyboard</h1>
+
+    <div class="input-container">
+        <label for="button1">Button 1 Action:</label>
+        <select id="button1">
+            <option value="none">None</option>
+            <option value="copy">Copy</option>
+            <option value="paste">Paste</option>
+            <option value="volumeUp">Volume Up</option>
+            <option value="volumeDown">Volume Down</option>
+        </select>
+    </div>
+
+    <div class="input-container">
+        <label for="button2">Button 2 Action:</label>
+        <select id="button2">
+            <option value="none">None</option>
+            <option value="copy">Copy</option>
+            <option value="paste">Paste</option>
+            <option value="volumeUp">Volume Up</option>
+            <option value="volumeDown">Volume Down</option>
+        </select>
+    </div>
+
+    <!-- Repeat for other 4 buttons -->
+    <div class="input-container knob-input">
+        <label for="knob">Knob Action:</label>
+        <select id="knob">
+            <option value="none">None</option>
+            <option value="scrollUp">Scroll Up</option>
+            <option value="scrollDown">Scroll Down</option>
+            <option value="volumeUp">Volume Up</option>
+            <option value="volumeDown">Volume Down</option>
+        </select>
+    </div>
+
+    <button onclick="applySettings()">Apply Settings</button>
+
+    <script>
+        // Function to apply settings for the keyboard
+        function applySettings() {
+            const button1Action = document.getElementById('button1').value;
+            const button2Action = document.getElementById('button2').value;
+            const knobAction = document.getElementById('knob').value;
+
+            // Example: Send configuration to the microcontroller or backend API
+            const settings = {
+                button1: button1Action,
+                button2: button2Action,
+                knob: knobAction
+            };
+
+            // For now, we'll just log the settings (this would be sent to the keyboard)
+            console.log('Applied Settings:', settings);
+
+            // If using WebHID API to connect to the keyboard:
+            connectToKeyboard(settings);
+        }
+
+        // Example function using WebHID API (you would need the proper setup for this to work with your hardware)
+        async function connectToKeyboard(settings) {
+            try {
+                const devices = await navigator.hid.requestDevice({ filters: [] });
+                if (devices.length > 0) {
+                    const device = devices[0];
+                    await device.open();
+                    console.log("Connected to device:", device.productName);
+
+                    // Send settings to the device
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(JSON.stringify(settings));
+                    await device.sendReport(0x00, data);  // This part depends on your device’s specific implementation
+                }
+            } catch (error) {
+                console.error("Failed to connect to device:", error);
+            }
+        }
+    </script>
+</body>
+</html>
